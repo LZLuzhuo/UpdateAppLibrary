@@ -12,7 +12,7 @@ public interface UpdateAppCheck {
      * 开始检查之前的回调, 可以在里面执行 从服务器拉取版本数据
      */
     @WorkerThread
-    public void startCheck(Context context);
+    public void startCheck(@Nullable Context context);
 
     /**
      * 设置app的网络下载地址

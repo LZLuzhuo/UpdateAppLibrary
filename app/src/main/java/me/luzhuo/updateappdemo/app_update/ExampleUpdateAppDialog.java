@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
@@ -40,18 +41,41 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
     private @Nullable PendingIntent installIntent;
 
     @Override
-    public void showDialog(Activity activity, boolean isForce, File apkFile, Map<String, Object> bundle) {
+    public void showDialog(@Nullable Activity activity, boolean isForce, @NonNull File apkFile, @Nullable Map<String, Object> bundle) {
         Log.e(TAG, "" + apkFile);
         this.activity = activity;
         String content = (String) bundle.get("content");
         String title = "升级提示";
         String okName = "现在升级";
         String cancelName = isForce ? null : "以后再说";
-        if (dialog == null) dialog = build(activity, title, content, okName, cancelName);
+        if (dialog == null) dialog = Dialog.instance().build(activity, title, content, okName, cancelName, false, null, null);
         if (!activity.isFinishing()) {
-            try { dialog.show(); } catch (WindowManager.BadTokenException e) {}
+            try {
+                /*dialog.show();*/
+                Dialog.show(dialog, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (apkFile.exists()) {
+                            new AppManager().installApk(activity, apkFile);
+                        } else {
+                            if (isForce) {
+                                if (progressDialog == null) progressDialog = Dialog.instance().build(activity, title, content, false, 0);
+                                progressDialog.setProgress(0);
+                                progressDialog.show();
+                            }
+
+                            manager = buildNotification(activity);
+                            installIntent = installIntent(activity, apkFile);
+
+                            AppUpdateManager.getInstance().startDownload(apkFile);
+                        }
+                        if (!isForce) dialog.dismiss();
+                    }
+                }, null);
+            } catch (WindowManager.BadTokenException e) {
+            } catch (IllegalStateException e) { }
         }
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        /*dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (apkFile.exists()) {
@@ -69,7 +93,7 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
                 }
                 if (!isForce) dialog.dismiss();
             }
-        });
+        });*/
     }
 
     int oldRate = 0;
@@ -88,7 +112,7 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
     }
 
     @Override
-    public void progressComplete(File apkFile) {
+    public void progressComplete(@NonNull File apkFile) {
         if (progressDialog != null) {
             progressDialog.dismiss();
             progressDialog = null;
@@ -98,16 +122,17 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
     }
 
     @Override
-    public void progressError(String errorMsg) {
+    public void progressError(@NonNull String errorMsg) {
+        Log.e(TAG, "apk下载失败: " + errorMsg);
         if (progressDialog != null) {
-            ToastManager.show2(activity, "apk下载失败: " + errorMsg);
+            ToastManager.show2(activity, "下载失败, 请稍后重试");
             progressDialog.dismiss();
             progressDialog = null;
         }
         if (manager != null) manager.cancel(1);
     }
 
-    public AlertDialog build(Context context, String title, String content, String okName, String cancelMame) {
+    /*public AlertDialog build(Context context, String title, String content, String okName, String cancelMame) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle(title);
@@ -115,16 +140,16 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
         builder.setPositiveButton(okName, null);
         builder.setNegativeButton(cancelMame, null);
         return builder.create();
-    }
+    }*/
 
-    public ProgressDialog build(Context context, String title, String content) {
+    /*public ProgressDialog build(Context context, String title, String content) {
         ProgressDialog dialog = new ProgressDialog(context);
         dialog.setCancelable(false);
         dialog.setTitle(title);
         dialog.setMessage(content);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         return dialog;
-    }
+    }*/
 
     public static final String channelID = "apk_download";
     public static final String channelName = "应用更新";
@@ -151,8 +176,8 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
         return PendingIntent.getActivity(context, 0, install, 0);
     }
 
-    public void notification(NotificationManager manager, Context context, int progress, int max, boolean isDownloaded, PendingIntent pendingIntent) {
-        if (manager == null || installIntent == null || activity == null) return;
+    public void notification(@Nullable NotificationManager manager, @Nullable Context context, int progress, int max, boolean isDownloaded, @Nullable PendingIntent pendingIntent) {
+        if (manager == null || installIntent == null || context == null) return;
 
         NotificationCompat.Builder build = new NotificationCompat.Builder(context, channelID)
                 .setContentTitle(context.getResources().getString(R.string.app_name))

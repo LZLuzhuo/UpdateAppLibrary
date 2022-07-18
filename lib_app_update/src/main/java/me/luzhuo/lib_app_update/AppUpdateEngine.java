@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.luzhuo.lib_core.app.appinfo.AppManager;
 import me.luzhuo.lib_core.app.base.CoreBaseApplication;
@@ -33,7 +34,7 @@ class AppUpdateEngine {
     private final UpdateAppCheck updateAppCheck;
     private final UpdateAppDialog updateAppDialog;
 
-    public AppUpdateEngine(UpdateAppCheck updateAppCheck, UpdateAppDialog updateAppDialog) {
+    public AppUpdateEngine(@NonNull UpdateAppCheck updateAppCheck, @NonNull UpdateAppDialog updateAppDialog) {
         this.updateAppCheck = updateAppCheck;
         this.updateAppDialog = updateAppDialog;
     }
@@ -58,8 +59,9 @@ class AppUpdateEngine {
             // 检查版本, 是否需要更新
             updateAppCheck.startCheck(CoreBaseApplication.appContext);
             int versionCode = updateAppCheck.getVersionCode();
-            int currentVersionCoe = new AppManager().getAppInfo().versionCode;
-            if (versionCode <= currentVersionCoe) return;
+            int currentVersionCode = new AppManager().getAppInfo().versionCode;
+            String appUrl = updateAppCheck.getAppUrl();
+            if (versionCode <= currentVersionCode || TextUtils.isEmpty(appUrl)) return;
 
             // 更新应用
             updateAppDialog();
@@ -78,7 +80,7 @@ class AppUpdateEngine {
     /**
      * 开始下载apk
      */
-    public void startDownload(File apkFile) {
+    public void startDownload(@NonNull File apkFile) {
         // 下载apk
         if (!apkFile.exists()) singleThreadExecutor.execute(new DownloadApk(apkFile));
     }

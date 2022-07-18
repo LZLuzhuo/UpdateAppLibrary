@@ -5,6 +5,7 @@ import android.app.Activity;
 import java.io.File;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
@@ -16,7 +17,7 @@ public interface UpdateAppDialog {
      * @param bundle 相关捆绑的数据
      */
     @UiThread
-    public void showDialog(Activity activity, boolean isForce, File apkFile, Map<String, Object> bundle);
+    public void showDialog(@NonNull Activity activity, boolean isForce, @NonNull File apkFile, @Nullable Map<String, Object> bundle);
 
     /**
      * 应用更新进度
@@ -31,11 +32,11 @@ public interface UpdateAppDialog {
      * 进度完成
      */
     @UiThread
-    public void progressComplete(File apkFile);
+    public void progressComplete(@NonNull File apkFile);
 
     /**
      * 进度发生错误
      */
     @UiThread
-    public void progressError(String errorMsg);
+    public void progressError(@NonNull String errorMsg);
 }

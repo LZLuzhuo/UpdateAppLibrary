@@ -12,6 +12,6 @@ public class MainActivity extends CoreBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //AppUpdateManager.getInstance().checkUpdate(this);
+        AppUpdateManager.getInstance().checkUpdate(this);
     }
 }

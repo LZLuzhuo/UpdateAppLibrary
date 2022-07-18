@@ -13,14 +13,14 @@ public class ExampleUpdateAppCheck implements UpdateAppCheck {
     private static final String TAG = ExampleUpdateAppCheck.class.getSimpleName();
     private String apkUrl;
     private int versionCode;
-    private boolean isForce;
+    private boolean isForce; // 是否强更
 
     @Override
     public void startCheck(Context context) {
         // TODO 同步网络请求
         // TODO 解析数据
-        // apkUrl = "https://file.expection.cn/admin/app/mingpianwang2.1.43.apk";
-        apkUrl = "http://luzhuo-data.oss-cn-hangzhou.aliyuncs.com/app-release.apk";
+        apkUrl = "https://file.expection.cn/admin/app/mingpianwang2.1.43.apk";
+        // apkUrl = "http://luzhuo-data.oss-cn-hangzhou.aliyuncs.com/app-release.apk";
         versionCode = 123;
         isForce = false;
     }

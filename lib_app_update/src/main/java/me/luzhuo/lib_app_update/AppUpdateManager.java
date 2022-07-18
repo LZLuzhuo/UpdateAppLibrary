@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -33,7 +34,7 @@ public class AppUpdateManager {
      * 初始化, 在Application里进行
      * @param autoUpdate 是否自动更新
      */
-    public void init(boolean autoUpdate, UpdateAppCheck updateAppCheck, UpdateAppDialog updateAppDialog) {
+    public void init(boolean autoUpdate, @NonNull UpdateAppCheck updateAppCheck, @NonNull UpdateAppDialog updateAppDialog) {
         this.autoUpdate = autoUpdate;
         this.updateEngine = new AppUpdateEngine(updateAppCheck, updateAppDialog);
         if (this.autoUpdate) {
@@ -58,7 +59,7 @@ public class AppUpdateManager {
     /**
      * 在Activity里调用
      */
-    public void startDownload(File apkFile) {
+    public void startDownload(@NonNull File apkFile) {
         this.updateEngine.startDownload(apkFile);
     }
 

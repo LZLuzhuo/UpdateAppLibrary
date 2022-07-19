@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import me.luzhuo.lib_core.data.hashcode.HashManager;
 import me.luzhuo.lib_file.FileManager;
 import me.luzhuo.lib_okhttp.OKHttpManager;
@@ -27,6 +28,7 @@ public class SingleDownload extends IDownloadApp {
     }
 
     @Override
+    @WorkerThread
     public void download(String apkUrl, File apkFile) {
         if (isDowning) return;
         isDowning = true;

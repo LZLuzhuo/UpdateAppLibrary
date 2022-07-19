@@ -1,17 +1,14 @@
 package me.luzhuo.updateappdemo.app_update;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -94,6 +91,11 @@ public class ExampleUpdateAppDialog implements UpdateAppDialog {
                 if (!isForce) dialog.dismiss();
             }
         });*/
+    }
+
+    @Override
+    public void progressStart(long total) {
+        // don't do anything.
     }
 
     int oldRate = 0;

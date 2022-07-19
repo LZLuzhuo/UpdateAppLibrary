@@ -22,7 +22,7 @@ public class ExampleUpdateAppCheck implements UpdateAppCheck {
         apkUrl = "https://file.expection.cn/admin/app/mingpianwang2.1.43.apk";
         // apkUrl = "http://luzhuo-data.oss-cn-hangzhou.aliyuncs.com/app-release.apk";
         versionCode = 123;
-        isForce = false;
+        isForce = true;
     }
 
     @Nullable

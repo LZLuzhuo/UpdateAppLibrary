@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import me.luzhuo.lib_app_update.download.DownloadType;
+import me.luzhuo.lib_app_update.download.IDownloadApp;
 
 /**
  * 应用更新管理
@@ -34,12 +36,16 @@ public class AppUpdateManager {
      * 初始化, 在Application里进行
      * @param autoUpdate 是否自动更新
      */
-    public void init(boolean autoUpdate, @NonNull UpdateAppCheck updateAppCheck, @NonNull UpdateAppDialog updateAppDialog) {
+    public void init(boolean autoUpdate, @NonNull UpdateAppCheck updateAppCheck, @NonNull UpdateAppDialog updateAppDialog, @DownloadType int downloadType) {
         this.autoUpdate = autoUpdate;
-        this.updateEngine = new AppUpdateEngine(updateAppCheck, updateAppDialog);
+        this.updateEngine = new AppUpdateEngine(updateAppCheck, updateAppDialog, downloadType);
         if (this.autoUpdate) {
             singleThreadExecutor.execute(autoCheckUpdateAction);
         }
+    }
+
+    public void init(boolean autoUpdate, @NonNull UpdateAppCheck updateAppCheck, @NonNull UpdateAppDialog updateAppDialog) {
+        init(autoUpdate, updateAppCheck, updateAppDialog, IDownloadApp.Multi);
     }
 
     /**

@@ -20,6 +20,13 @@ public interface UpdateAppDialog {
     public void showDialog(@NonNull Activity activity, boolean isForce, @NonNull File apkFile, @Nullable Map<String, Object> bundle);
 
     /**
+     * 开始下载
+     * @param total 文件总大小
+     */
+    @UiThread
+    public void progressStart(long total);
+
+    /**
      * 应用更新进度
      * @param percent 进度百分比 = 当前进度 / 总大小
      * @param progress 当前进度

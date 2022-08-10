@@ -1,3 +1,17 @@
+/* Copyright 2022 Luzhuo. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package me.luzhuo.lib_app_update.download;
 
 import android.accounts.NetworkErrorException;
@@ -9,10 +23,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStream;;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +41,11 @@ import okhttp3.internal.Util;
 
 /**
  * 多线程分段下载
+ * 线程过多, 在使用流量下载的时候, 会导致大部分读取超时
  */
 public class MultiDownload extends IDownloadApp {
-    private static final String TAG = MultiDownload.class.getSimpleName();
     private final IDownloadCallback downloadCallback;
-    private final ExecutorService executorService = new ThreadPoolExecutor(0/*核心线程*/, Integer.MAX_VALUE/*最大线程*/, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), Util.threadFactory("download slice apk", false));
+    private final ExecutorService executorService = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors()/*核心线程*/, Integer.MAX_VALUE/*最大线程*/, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), Util.threadFactory("download slice apk", false));
     private final static int SliceFileSize = 1000000; // 切片文件大小, 默认1M
     private final ArrayList<Slice> slices = new ArrayList<>();
     private File apkFile;
@@ -63,12 +77,12 @@ public class MultiDownload extends IDownloadApp {
 
             for (int i = 0; i < slice; i++) {
                 File sliceFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadSliceCache", HashManager.getInstance().getUuid(apkUrl + fileSize + i));
-                slices.add(new Slice(i, sliceFile, SliceFileSize * i, SliceFileSize * (i + 1) - 1));
+                slices.add(new Slice(i, sliceFile, (long) SliceFileSize * i, (long) SliceFileSize * (i + 1) - 1));
             }
             if (supplementSlice) {
                 int i = slice;
                 File sliceFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadSliceCache", HashManager.getInstance().getUuid(apkUrl + fileSize + i));
-                slices.add(new Slice(i, sliceFile, SliceFileSize * i, fileSize - 1));
+                slices.add(new Slice(i, sliceFile, (long) SliceFileSize * i, fileSize - 1));
             }
 
             // 2. 检查本地切片
@@ -83,7 +97,8 @@ public class MultiDownload extends IDownloadApp {
             }
 
             // 4. 下载剩余未下载的切片文件
-            downloadCallback.start(fileSize);
+            downloadCallback.start(slice);
+            downloadCallback.progress(mProgress * 1f / mSlice, mProgress, mSlice);
             for (int i = 0; i < slices.size(); i++) {
                 if (!slices.get(i).isDownloaded) downloadSliceFile(apkUrl, slices.get(i));
             }

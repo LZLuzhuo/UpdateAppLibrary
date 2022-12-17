@@ -10,6 +10,6 @@ public class MyApplication extends CoreBaseApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        AppUpdateManager.getInstance().init(true, new ExampleUpdateAppCheck(), new ExampleUpdateAppDialog());
+        AppUpdateManager.getInstance().init(false, new ExampleUpdateAppCheck(), new ExampleUpdateAppDialog());
     }
 }

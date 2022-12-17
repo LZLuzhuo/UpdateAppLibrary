@@ -76,7 +76,7 @@ class AppUpdateEngine implements IDownloadCallback {
             int versionCode = updateAppCheck.getVersionCode();
             int currentVersionCode = new AppManager().getAppInfo().versionCode;
             String appUrl = updateAppCheck.getAppUrl();
-            if (versionCode <= currentVersionCode || TextUtils.isEmpty(appUrl)) return;
+            if (versionCode <= currentVersionCode || TextUtils.isEmpty(appUrl) || !appUrl.startsWith("http")) return;
 
             // 更新应用
             updateAppDialog();
@@ -86,7 +86,7 @@ class AppUpdateEngine implements IDownloadCallback {
     private void updateAppDialog() {
         // 弹窗
         String appUrl = updateAppCheck.getAppUrl();
-        File apkFile = new File(new FileManager().getCacheDirectory() + File.separator + "apkCache", HashManager.getInstance().getMD5(appUrl) + ".apk");
+        File apkFile = new File(new FileManager(CoreBaseApplication.appContext).getCacheDirectory() + File.separator + "apkCache", HashManager.getInstance().getMD5(appUrl) + ".apk");
         Activity activity = currentActivity == null ? me.luzhuo.lib_core.app.base.AppManager.currentActivity() : currentActivity;
         if (activity == null || activity.isFinishing()) return; // 当前没有存活的Activity
         mainThread.post(new ShowDialogAction(activity, updateAppCheck.isForce(), apkFile));

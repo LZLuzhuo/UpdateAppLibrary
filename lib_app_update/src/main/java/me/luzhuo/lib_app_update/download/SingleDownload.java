@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import me.luzhuo.lib_core.app.base.CoreBaseApplication;
 import me.luzhuo.lib_core.data.hashcode.HashManager;
 import me.luzhuo.lib_file.FileManager;
 import me.luzhuo.lib_okhttp.OKHttpManager;
@@ -54,7 +55,7 @@ public class SingleDownload extends IDownloadApp {
             Response response = new OKHttpManager().getClient().newCall(request).execute();
             if (response.isSuccessful() || response.isRedirect()) {
 
-                File tempFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadCache", HashManager.getInstance().getUuid());
+                File tempFile = new File(new FileManager(CoreBaseApplication.appContext).getCacheDirectory() + File.separator + "downloadCache", HashManager.getInstance().getUuid());
                 if (!apkFile.getParentFile().exists()) { apkFile.getParentFile().mkdirs(); }
                 if (!tempFile.getParentFile().exists()) { tempFile.getParentFile().mkdirs(); }
                 if (!tempFile.exists()) { tempFile.createNewFile(); }

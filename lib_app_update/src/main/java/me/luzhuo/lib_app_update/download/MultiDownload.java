@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import me.luzhuo.lib_core.app.base.CoreBaseApplication;
 import me.luzhuo.lib_core.data.hashcode.HashManager;
 import me.luzhuo.lib_file.FileManager;
 import me.luzhuo.lib_okhttp.OKHttpManager;
@@ -76,12 +77,12 @@ public class MultiDownload extends IDownloadApp {
             this.mProgress = 0;
 
             for (int i = 0; i < slice; i++) {
-                File sliceFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadSliceCache", HashManager.getInstance().getUuid(apkUrl + fileSize + i));
+                File sliceFile = new File(new FileManager(CoreBaseApplication.appContext).getCacheDirectory() + File.separator + "downloadSliceCache", HashManager.getInstance().getUuid(apkUrl + fileSize + i));
                 slices.add(new Slice(i, sliceFile, (long) SliceFileSize * i, (long) SliceFileSize * (i + 1) - 1));
             }
             if (supplementSlice) {
                 int i = slice;
-                File sliceFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadSliceCache", HashManager.getInstance().getUuid(apkUrl + fileSize + i));
+                File sliceFile = new File(new FileManager(CoreBaseApplication.appContext).getCacheDirectory() + File.separator + "downloadSliceCache", HashManager.getInstance().getUuid(apkUrl + fileSize + i));
                 slices.add(new Slice(i, sliceFile, (long) SliceFileSize * i, fileSize - 1));
             }
 
@@ -120,7 +121,7 @@ public class MultiDownload extends IDownloadApp {
                     Response response = new OKHttpManager().getClient().newCall(request).execute();
                     if (response.isSuccessful() || response.isRedirect()) {
 
-                        File tempFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadCache", HashManager.getInstance().getUuid());
+                        File tempFile = new File(new FileManager(CoreBaseApplication.appContext).getCacheDirectory() + File.separator + "downloadCache", HashManager.getInstance().getUuid());
                         if (!slice.sliceFile.getParentFile().exists()) { slice.sliceFile.getParentFile().mkdirs(); }
                         if (!tempFile.getParentFile().exists()) { tempFile.getParentFile().mkdirs(); }
                         if (!tempFile.exists()) { tempFile.createNewFile(); }
@@ -166,7 +167,7 @@ public class MultiDownload extends IDownloadApp {
      */
     private boolean mergeSliceFile(File apkFile) throws IOException {
         try {
-            File tempFile = new File(new FileManager().getCacheDirectory() + File.separator + "downloadCache", HashManager.getInstance().getUuid());
+            File tempFile = new File(new FileManager(CoreBaseApplication.appContext).getCacheDirectory() + File.separator + "downloadCache", HashManager.getInstance().getUuid());
             if (!apkFile.getParentFile().exists()) apkFile.getParentFile().mkdirs();
             if (!tempFile.getParentFile().exists()) tempFile.getParentFile().mkdirs();
             if (!tempFile.exists()) tempFile.createNewFile();

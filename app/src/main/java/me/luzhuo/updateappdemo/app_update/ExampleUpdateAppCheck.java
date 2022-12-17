@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import me.luzhuo.lib_app_update.UpdateAppCheck;
 
 public class ExampleUpdateAppCheck implements UpdateAppCheck {
-    private static final String TAG = ExampleUpdateAppCheck.class.getSimpleName();
     private String apkUrl;
     private int versionCode;
     private boolean isForce; // 是否强更
@@ -19,8 +18,7 @@ public class ExampleUpdateAppCheck implements UpdateAppCheck {
     public void startCheck(Context context) {
         // TODO 同步网络请求
         // TODO 解析数据
-        apkUrl = "https://file.expection.cn/admin/app/mingpianwang2.1.43.apk";
-        // apkUrl = "http://luzhuo-data.oss-cn-hangzhou.aliyuncs.com/app-release.apk";
+        apkUrl = "https://652a3b7a97c2aa061b59601f56ff9948.rdt.tfogc.com:49156/dd.myapp.com/sjy.00004/16891/apk/9702011C8E5D6F5019372701B7206C7F.apk?mkey=639da2595c7416850f37aefcea6188d2&arrive_key=78392160294&fsname=com.tencent.mobileqq_8.9.25_3640.apk&cip=117.147.91.111&proto=https";
         versionCode = 123;
         isForce = true;
     }
